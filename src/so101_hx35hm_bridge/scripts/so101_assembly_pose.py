@@ -83,7 +83,7 @@ def _default_srdf_path() -> pathlib.Path:
         if candidate.exists():
             return candidate
 
-    # 2) Fallback to in-tree layout: ~/ros2_ws/src/so101-ros-physical-ai/so101_moveit_config/config/so101_arm.srdf
+    # 2) Fallback to in-tree layout: <workspace>/src/so101-ros-physical-ai/so101_moveit_config/config/so101_arm.srdf
     this_file = pathlib.Path(__file__).resolve()
     ws_src = this_file.parents[2]  # .../ros2_ws/src
     candidate = (

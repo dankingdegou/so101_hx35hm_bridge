@@ -13,10 +13,11 @@ This repo focuses on:
 ## Quick Start
 
 ```bash
-cd ~/ros2_ws/src
+export ROS_WS="$HOME/ros2_ws"
+cd "$ROS_WS/src"
 source /opt/ros/jazzy/setup.bash
 colcon build --symlink-install
-source ~/ros2_ws/src/install/setup.bash
+source "$ROS_WS/install/setup.bash"
 ros2 launch so101_bringup follower_hx35hm_moveit.launch.py \
   use_hx35hm:=true \
   use_cameras:=false \

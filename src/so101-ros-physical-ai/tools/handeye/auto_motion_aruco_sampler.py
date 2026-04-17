@@ -21,6 +21,9 @@ from std_msgs.msg import Float64MultiArray
 from tf2_ros import Buffer, TransformException, TransformListener
 
 
+DEFAULT_DATA_DIR = Path.home() / ".ros" / "so101_hx35hm_bridge"
+
+
 JOINT_NAMES = [
     "shoulder_pan",
     "shoulder_lift",
@@ -238,7 +241,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--tool-frame", default="moving_jaw_so101_v1_link")
     p.add_argument("--samples-target", type=int, default=30, help="有效样本目标数")
     p.add_argument("--seed", type=int, default=42)
-    p.add_argument("--out", default="~/ros2_ws/aruco_handeye_samples.json")
+    p.add_argument("--out", default=str(DEFAULT_DATA_DIR / "aruco_handeye_samples.json"))
     p.add_argument("--max-step-rad", type=float, default=0.12)
     p.add_argument("--step-dt-s", type=float, default=0.12)
     p.add_argument("--reach-timeout-s", type=float, default=8.0)

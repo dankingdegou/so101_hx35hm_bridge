@@ -22,7 +22,7 @@ MoveIt 这边真正执行规划结果时，走的是这两个 action：
 
 对应配置在：
 
-- [moveit_controllers.yaml](/home/rog/ros2_ws/src/so101-ros-physical-ai/so101_moveit_config/config/moveit_controllers.yaml)
+- [moveit_controllers.yaml](so101-ros-physical-ai/so101_moveit_config/config/moveit_controllers.yaml)
 
 HX35HM 桥接节点会在 follower 命名空间里提供：
 
@@ -31,7 +31,7 @@ HX35HM 桥接节点会在 follower 命名空间里提供：
 
 相关实现见：
 
-- [bridge_node.py](/home/rog/ros2_ws/src/so101_hx35hm_bridge/so101_hx35hm_bridge/bridge_node.py)
+- [bridge_node.py](so101_hx35hm_bridge/so101_hx35hm_bridge/bridge_node.py)
 
 所以你可以把它理解成：
 
@@ -47,10 +47,11 @@ HX35HM 桥接节点会在 follower 命名空间里提供：
 ### 2.1 先编译并 source
 
 ```bash
-cd ~/ros2_ws/src
+export ROS_WS="$HOME/ros2_ws"
+cd "$ROS_WS/src"
 source /opt/ros/jazzy/setup.bash
 colcon build --packages-select so101_bringup so101_hx35hm_bridge so101_moveit_config --symlink-install
-source ~/ros2_ws/src/install/setup.bash
+source "$ROS_WS/install/setup.bash"
 ```
 
 如果你只是改了 launch 或 yaml，通常也建议先重新 `source` 一次工作区。
@@ -62,9 +63,10 @@ source ~/ros2_ws/src/install/setup.bash
 推荐直接起这条总入口：
 
 ```bash
-cd ~/ros2_ws/src
+export ROS_WS="$HOME/ros2_ws"
+cd "$ROS_WS/src"
 source /opt/ros/jazzy/setup.bash
-source ~/ros2_ws/src/install/setup.bash
+source "$ROS_WS/install/setup.bash"
 
 ros2 launch so101_bringup follower_hx35hm_moveit.launch.py \
   use_hx35hm:=true \
@@ -109,9 +111,10 @@ ros2 launch so101_bringup follower_hx35hm_moveit.launch.py \
 另开一个终端：
 
 ```bash
-cd ~/ros2_ws/src
+export ROS_WS="$HOME/ros2_ws"
+cd "$ROS_WS/src"
 source /opt/ros/jazzy/setup.bash
-source ~/ros2_ws/src/install/setup.bash
+source "$ROS_WS/install/setup.bash"
 ```
 
 ### 5.1 看节点
@@ -170,7 +173,7 @@ RViz 会自动打开 `moveit.rviz` 配置。
 
 MoveIt 的语义状态定义在：
 
-- [so101_arm.srdf](/home/rog/ros2_ws/src/so101-ros-physical-ai/so101_moveit_config/config/so101_arm.srdf)
+- [so101_arm.srdf](so101-ros-physical-ai/so101_moveit_config/config/so101_arm.srdf)
 
 其中你会经常用到：
 
@@ -260,11 +263,11 @@ ros2 launch so101_bringup follower_moveit_demo.launch.py hardware_type:=mock
 
 MoveIt 本体相关文件是这些：
 
-- [move_group.launch.py](/home/rog/ros2_ws/src/so101-ros-physical-ai/so101_moveit_config/launch/move_group.launch.py)
-- [moveit_rviz.launch.py](/home/rog/ros2_ws/src/so101-ros-physical-ai/so101_moveit_config/launch/moveit_rviz.launch.py)
-- [moveit_controllers.yaml](/home/rog/ros2_ws/src/so101-ros-physical-ai/so101_moveit_config/config/moveit_controllers.yaml)
-- [joint_limits.yaml](/home/rog/ros2_ws/src/so101-ros-physical-ai/so101_moveit_config/config/joint_limits.yaml)
-- [kinematics.yaml](/home/rog/ros2_ws/src/so101-ros-physical-ai/so101_moveit_config/config/kinematics.yaml)
+- [move_group.launch.py](so101-ros-physical-ai/so101_moveit_config/launch/move_group.launch.py)
+- [moveit_rviz.launch.py](so101-ros-physical-ai/so101_moveit_config/launch/moveit_rviz.launch.py)
+- [moveit_controllers.yaml](so101-ros-physical-ai/so101_moveit_config/config/moveit_controllers.yaml)
+- [joint_limits.yaml](so101-ros-physical-ai/so101_moveit_config/config/joint_limits.yaml)
+- [kinematics.yaml](so101-ros-physical-ai/so101_moveit_config/config/kinematics.yaml)
 
 如果你后面想调规划性能，优先看这几份。
 

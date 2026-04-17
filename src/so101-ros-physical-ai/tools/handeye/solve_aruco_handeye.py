@@ -11,6 +11,9 @@ from scipy.optimize import least_squares
 from scipy.spatial.transform import Rotation as R
 
 
+DEFAULT_DATA_DIR = Path.home() / ".ros" / "so101_hx35hm_bridge"
+
+
 def pose_to_matrix(position_xyz: list[float], quaternion_xyzw: list[float]) -> np.ndarray:
     t = np.asarray(position_xyz, dtype=np.float64).reshape(3)
     q = np.asarray(quaternion_xyzw, dtype=np.float64).reshape(4)
@@ -83,8 +86,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Solve eye-to-hand from ArUco-on-gripper samples using bTg * gTm = bTc * cTm."
     )
-    parser.add_argument("--samples", default="~/ros2_ws/aruco_handeye_samples.json")
-    parser.add_argument("--out", default="~/ros2_ws/aruco_handeye_result.json")
+    parser.add_argument("--samples", default=str(DEFAULT_DATA_DIR / "aruco_handeye_samples.json"))
+    parser.add_argument("--out", default=str(DEFAULT_DATA_DIR / "aruco_handeye_result.json"))
     parser.add_argument("--base-frame", default="base_link")
     parser.add_argument("--camera-frame", default="cam_overhead")
     parser.add_argument("--rot-weight", type=float, default=0.10, help="Meter-equivalent weight for rotation residual.")

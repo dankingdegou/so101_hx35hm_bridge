@@ -1,4 +1,6 @@
 import os
+import tempfile
+from pathlib import Path
 
 import yaml
 from ament_index_python.packages import get_package_share_directory
@@ -6,6 +8,48 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, OpaqueFunction
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
+
+
+def _resolve_camera_info_url(raw_url, param_dir: Path, pkg_share: Path):
+    if not isinstance(raw_url, str) or not raw_url:
+        return raw_url
+    if "://" in raw_url or os.path.isabs(raw_url):
+        return raw_url
+
+    candidates = [
+        param_dir / raw_url,
+        pkg_share / "config" / "cameras" / raw_url,
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return f"file://{candidate.resolve()}"
+    return f"file://{(param_dir / raw_url).resolve()}"
+
+
+def _rewrite_camera_info_urls(value, param_dir: Path, pkg_share: Path):
+    if isinstance(value, dict):
+        rewritten = {}
+        for key, item in value.items():
+            if key == "camera_info_url":
+                rewritten[key] = _resolve_camera_info_url(item, param_dir, pkg_share)
+            else:
+                rewritten[key] = _rewrite_camera_info_urls(item, param_dir, pkg_share)
+        return rewritten
+    if isinstance(value, list):
+        return [_rewrite_camera_info_urls(item, param_dir, pkg_share) for item in value]
+    return value
+
+
+def _prepare_param_file(param_file: str, pkg_share: str) -> str:
+    param_path = Path(param_file).expanduser().resolve()
+    with param_path.open("r", encoding="utf-8") as f:
+        cfg = yaml.safe_load(f) or {}
+
+    rewritten = _rewrite_camera_info_urls(cfg, param_path.parent, Path(pkg_share))
+    tmp = tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", prefix="so101_cam_", delete=False)
+    with tmp:
+        yaml.safe_dump(rewritten, tmp, sort_keys=False)
+    return tmp.name
 
 
 def _spawn_cameras(context):
@@ -36,6 +80,8 @@ def _spawn_cameras(context):
             else:
                 param_file = os.path.join(pkg_share, "config", "cameras", param_path)
 
+        resolved_param_file = _prepare_param_file(param_file, pkg_share)
+
         if cam_type == "v4l2_camera":
             nodes.append(
                 Node(
@@ -43,7 +89,7 @@ def _spawn_cameras(context):
                     executable="v4l2_camera_node",
                     name=name,
                     namespace=ns,
-                    parameters=[param_file, {"use_sim_time": False}],
+                    parameters=[resolved_param_file, {"use_sim_time": False}],
                     output="screen",
                 )
             )
@@ -54,7 +100,7 @@ def _spawn_cameras(context):
                     executable="camera_node",
                     name=name,
                     namespace=ns,
-                    parameters=[param_file, {"use_sim_time": False}],
+                    parameters=[resolved_param_file, {"use_sim_time": False}],
                     output="screen",
                     remappings=[
                         ("~/image_raw", "image_raw"),
@@ -70,7 +116,7 @@ def _spawn_cameras(context):
                     executable="gscam_node",
                     name=name,
                     namespace=ns,
-                    parameters=[param_file, {"use_sim_time": False}],
+                    parameters=[resolved_param_file, {"use_sim_time": False}],
                     output="screen",
                     remappings=[
                         ("camera/image_raw", "image_raw"),
@@ -86,7 +132,7 @@ def _spawn_cameras(context):
                     executable="usb_cam_node_exe",
                     name=name,
                     namespace=ns,
-                    parameters=[param_file, {"use_sim_time": False}],
+                    parameters=[resolved_param_file, {"use_sim_time": False}],
                     output="screen",
                 )
             )
@@ -97,7 +143,7 @@ def _spawn_cameras(context):
                     executable="realsense2_camera_node",
                     name=name,
                     namespace=ns,
-                    parameters=[param_file, {"use_sim_time": False}],
+                    parameters=[resolved_param_file, {"use_sim_time": False}],
                     output="screen",
                     # Normalize RealSense topic layout to the project's convention:
                     #   /<ns>/image_raw, /<ns>/camera_info, /<ns>/depth/image_raw, ...
@@ -125,7 +171,7 @@ def _spawn_cameras(context):
                     executable="openni2_camera_node",
                     name=name,
                     namespace=ns,
-                    parameters=[param_file, {"use_sim_time": False}],
+                    parameters=[resolved_param_file, {"use_sim_time": False}],
                     output="screen",
                 )
             )

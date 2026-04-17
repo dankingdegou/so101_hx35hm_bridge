@@ -21,6 +21,9 @@ from sensor_msgs.msg import Image
 from tf2_ros import Buffer, TransformException, TransformListener
 
 
+DEFAULT_DATA_DIR = Path.home() / ".ros" / "so101_hx35hm_bridge"
+
+
 @dataclass
 class PoseData:
     frame_id: str
@@ -159,7 +162,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--debug-image-topic", default="/vision/aruco/debug_image")
     parser.add_argument("--base-frame", default="base_link")
     parser.add_argument("--tool-frame", default="moving_jaw_so101_v1_link")
-    parser.add_argument("--out", default="~/ros2_ws/aruco_handeye_samples.json")
+    parser.add_argument("--out", default=str(DEFAULT_DATA_DIR / "aruco_handeye_samples.json"))
     parser.add_argument("--max-pose-age-s", type=float, default=0.30)
     return parser.parse_args()
 

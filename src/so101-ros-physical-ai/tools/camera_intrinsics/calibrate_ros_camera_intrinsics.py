@@ -67,6 +67,27 @@ def save_camera_yaml(
     path.write_text(yaml.safe_dump(payload, sort_keys=False), encoding="utf-8")
 
 
+def default_output_path() -> Path:
+    try:
+        from ament_index_python.packages import get_package_share_directory  # type: ignore
+
+        return (
+            Path(get_package_share_directory("so101_bringup"))
+            / "config"
+            / "cameras"
+            / "cam_overhead_calib.yaml"
+        )
+    except Exception:
+        # Fallback for source-tree usage when the package has not been installed yet.
+        return (
+            Path(__file__).resolve().parents[2]
+            / "so101_bringup"
+            / "config"
+            / "cameras"
+            / "cam_overhead_calib.yaml"
+        )
+
+
 def rotation_degrees(corners: np.ndarray) -> float:
     first = corners[0, 0]
     last = corners[-1, 0]
@@ -253,10 +274,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--rows", type=int, default=6, help="棋盘格内部角点行数")
     parser.add_argument("--square-size-mm", type=float, default=20.0, help="每个小格边长，单位 mm")
     parser.add_argument("--min-samples", type=int, default=18)
-    parser.add_argument(
-        "--output",
-        default="~/ros2_ws/src/so101-ros-physical-ai/so101_bringup/config/cameras/cam_overhead_calib.yaml",
-    )
+    parser.add_argument("--output", default=str(default_output_path()))
     return parser.parse_args()
 
 
