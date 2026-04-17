@@ -40,6 +40,11 @@ If you only want the full operator workflow, open:
 
 - [HX35HM_SO101_MoveIt规划控制启动流程.md](src/HX35HM_SO101_MoveIt规划控制启动流程.md)
 
+如果你想先看硬件准备，请打开：
+If you want to check hardware preparation first, open:
+
+- [HX35HM_SO101_硬件BOM清单.md](src/HX35HM_SO101_硬件BOM清单.md)
+
 ## 仓库内容 / What Is Inside
 
 - `src/so101_hx35hm_bridge` - HX35HM 串口桥接、ArUco 检测、红球检测、装配辅助 / HX35HM serial bridge, ArUco detector, red block detector, assembly helpers
