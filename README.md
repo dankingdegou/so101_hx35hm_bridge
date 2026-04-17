@@ -2,13 +2,19 @@
 
 Control-side workspace for the HX35HM + SO101 arm setup.
 
-This repo focuses on:
+This repo is the control and planning side of the project:
 
 - HX35HM bridge and servo control
 - ROS 2 bringup and controllers
 - MoveIt planning and execution
 - teleop
 - grasping and calibration tooling
+
+## Preview
+
+![Hardware setup](assets/robotarm/hardware_setup.jpg)
+
+![RViz planning overview](assets/robotarm/rviz_planning_overview.png)
 
 ## Quick Start
 
